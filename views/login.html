@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firebase Server Auth</title>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+    <script src="https://apis.google.com/js/platform.js?onload=onLoadCallback" async defer></script>
+    <script>
+
+</script>
+  </head>
+  <body style="background-color:pink">
+    <main>
+      <section>
+          <h1>Login/Signup</h1>
+          <br>
+          <label>Email</label>
+          <input type="text" id='username' required>
+          <label>Password</label>
+          <input type="password" id='password' required>
+          <br>
+          <br>
+          <button onclick="loginWithGoogle()">Log in/Signup with Google</button>
+          <button onclick="loginWithEmail()">Log in with Email</button>
+          <button onclick="signupWithEmail()">Signup with Email</button>
+      </section> 
+
+      <script>
+        var setAuth=false;
+        var setToken='';
+        var userName='';
+        const loginWithGoogle=()=>
+        {
+          var firebaseConfig = {
+          apiKey: "AIzaSyAtKL97rn1E85mthdxWQOlUM_gBbD4fa2Y",
+          authDomain: "assignment-b0f70.firebaseapp.com",
+          databaseURL: "https://assignment-b0f70-default-rtdb.firebaseio.com",
+          projectId: "assignment-b0f70",
+          storageBucket: "assignment-b0f70.appspot.com",
+          messagingSenderId: "922788449361",
+          appId: "1:922788449361:web:73a87f7b8c55c3936e3c70",
+        };
+
+          const fb=firebase.initializeApp(firebaseConfig);
+          var provider = new firebase.auth.GoogleAuthProvider();
+          fb.auth().signInWithPopup(provider)
+          .then((userCred)=>
+          {
+            userCred.user.getIdToken().then((token)=>
+            {
+              firebase.auth().onAuthStateChanged((userCred)=>{
+                userName=userCred.displayName
+                document.cookie='userName='+userName
+              })
+              document.cookie='token='+token
+              window.location.assign("/api/blogs");
+            })
+          })
+          
+        }
+
+
+        const loginWithEmail=()=>{
+          let username = document.getElementById('username').value
+          let password = document.getElementById('password').value
+          console.log(username,password)
+          var firebaseConfig = {
+          apiKey: "AIzaSyAtKL97rn1E85mthdxWQOlUM_gBbD4fa2Y",
+          authDomain: "assignment-b0f70.firebaseapp.com",
+          databaseURL: "https://assignment-b0f70-default-rtdb.firebaseio.com",
+          projectId: "assignment-b0f70",
+          storageBucket: "assignment-b0f70.appspot.com",
+          messagingSenderId: "922788449361",
+          appId: "1:922788449361:web:73a87f7b8c55c3936e3c70",
+        };
+
+          const fb=firebase.initializeApp(firebaseConfig);
+          var provider = new firebase.auth.GoogleAuthProvider();
+          firebase.auth().signInWithEmailAndPassword(username.trim(),password)
+          .then((userCred)=>
+          {
+            console.log(userCred)
+            userCred.user.getIdToken().then((token)=>
+            {
+                userName=userCred.user.email
+                console.log(userName)
+                document.cookie='userName='+userName
+                document.cookie='token='+token
+            })
+            .then(() => {
+                  window.location.assign("/api/blogs");
+            })
+            .catch((error) => {
+              const errorCode = error.code;
+              const errorMessage = error.message;
+            })
+          })
+        }
+
+
+        const signupWithEmail=()=>{
+          let username = document.getElementById('username').value
+          let password = document.getElementById('password').value
+          console.log(username,password)
+          var firebaseConfig = {
+          apiKey: "AIzaSyAtKL97rn1E85mthdxWQOlUM_gBbD4fa2Y",
+          authDomain: "assignment-b0f70.firebaseapp.com",
+          databaseURL: "https://assignment-b0f70-default-rtdb.firebaseio.com",
+          projectId: "assignment-b0f70",
+          storageBucket: "assignment-b0f70.appspot.com",
+          messagingSenderId: "922788449361",
+          appId: "1:922788449361:web:73a87f7b8c55c3936e3c70",
+        };
+
+          const fb=firebase.initializeApp(firebaseConfig);
+          var provider = new firebase.auth.GoogleAuthProvider();
+          firebase.auth().createUserWithEmailAndPassword(username.trim(),password)
+          .then((userCred)=>
+          {
+            console.log(userCred)
+            userCred.user.getIdToken().then((token)=>
+            {
+                userName=userCred.user.email
+                console.log(userName)
+                document.cookie='userName='+userName
+                document.cookie='token='+token
+            })
+            .then(() => {
+                  window.location.assign("/api/blogs");
+            })
+            .catch((error) => {
+              const errorCode = error.code;
+              const errorMessage = error.message;
+            })
+          })
+        }  
+      </script>  
+    </main>
+  </body>
+</html>
